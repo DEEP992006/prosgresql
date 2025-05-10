@@ -9,11 +9,11 @@ router.get("/",async (req,res) => {
 })
 // add new todo
 router.post("/",async (req,res) => {
-  const {name,description} = req.body  // extracting data from request body 
-  const addedtodo =await addtodo(name,description) //store to db 
+  const {name,description,user_email} = req.body  // extracting data from request body 
+  const addedtodo =await addtodo(name,description,user_email) //store to db 
   res.send(addedtodo) // sending response
 })
-// update todp
+// update todo
 router.put("/",async (req,res) => {
     const {name,new_todo} = req.body // extract from request body
     res.send(await update_todo(name,new_todo));// updating todo and sending response
