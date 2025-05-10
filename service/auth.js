@@ -1,17 +1,26 @@
 import { sql } from "../config/db.js";
+import bcrypt from "bcryptjs";
+import { generateToken } from "./jwt.js";
+
 export const signup = async (email, password) => {
-  let new_user = await sql`
-    INSERT into "user"(email,password)
-    VALUES(${email},${password})
-    RETURNING email,password
-    `;
-  return new_user;
+  const hashed_pass = await bcrypt.hash(password, 10);
+  const new_user = await sql`
+    INSERT INTO "user"(email, password)
+    VALUES(${email}, ${hashed_pass})
+    RETURNING email
+  `;
+  return new_user[0];
 };
+
 export const login = async (email, password) => {
   const user = await sql`
-    SELECT * FROM "user" WHERE email = ${email} AND password = ${password}
-    `;
-  console.log(user);
+    SELECT * FROM "user" WHERE email = ${email}
+  `;
+  if (user.length === 0) return "User not found";
 
-  return user;
+  const is_match = await bcrypt.compare(password, user[0].password);
+  if (!is_match) return "Invalid password";
+
+  const token = await generateToken({ email });
+  return { token };
 };

@@ -1,9 +1,11 @@
 //importing module and packages
 import { sql } from "../config/db.js";
+import { verifyToken } from "./jwt.js";
 // to display all todo
-export const showtodo = async () => {
+export const showtodo = async (id) => {
+  let auth_user = verifyToken(id);
   const alltodo = await sql`
-      SELECT * FROM todo
+      SELECT * FROM todo WHERE user_email = ${auth_user.email}
       `; // sql query
   return alltodo; // returning all todo
 };
@@ -16,9 +18,11 @@ export const addtodo = async (name, description, user_email) => {
   return newtodo; // returning new todo
 };
 // update todo
-export const update_todo = async (name, new_todo) => {
+export const update_todo = async (name, new_todo, token) => {
+  const auth_user = verifyToken(token);
+  console.log(auth_user.email);
   const updated_todo =
-    await sql`update todo SET name = ${new_todo.name},description = ${new_todo.description},user_email = ${new_todo.user_email} WHERE name = ${name} returning name,description,user_email`; // sql query
+    await sql`update todo SET name = ${new_todo.name},description = ${new_todo.description} WHERE name = ${name} AND user_email = ${auth_user.email} returning name,description,user_email`; // sql query
   return updated_todo; // return updates todo
 };
 // delete todo
