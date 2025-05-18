@@ -12,9 +12,9 @@ router.get("/:id",async (req,res) => {
 })
 // add new todo
 router.post("/",async (req,res) => {
-  const {name,description,tocken} = req.body  // extracting data from request body 
+  const {name,description,token} = req.body  // extracting data from request body 
   // const auth = await verifyToken(tocken)
-  const addedtodo =await addtodo(name,description,verifyToken(tocken).email) //store to db 
+  const addedtodo =await addtodo(name,description,verifyToken(token).email) //store to db 
   res.send(addedtodo) // sending response
 })
 // update todo

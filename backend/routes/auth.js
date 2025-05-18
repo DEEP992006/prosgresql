@@ -11,8 +11,9 @@ router.post("/signup", async (req, res) => {
     const new_user = await signup(email, password);
     res.status(201).send(new_user);
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).send("Registration failed");
+    console.error("Signup error:", error.message);
+    res.status(500).json({ error: error.message });
+
   }
 });
 
@@ -26,7 +27,7 @@ router.post("/login", async (req, res) => {
     res.send(user_data);
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).send("Login failed");
+    res.status(500).json({ error: error.message })
   }
 });
 
